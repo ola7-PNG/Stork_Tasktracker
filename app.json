@@ -26,7 +26,10 @@
       "package": "com.ola7.stork"
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/favicon.png",
+      "bundler": "metro",
+      "output": "static",
+      "baseUrl": "/Stork_Tasktracker/app"
     },
     "plugins": [
       "expo-asset"
