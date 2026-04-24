@@ -5,7 +5,7 @@ export default function WelcomeScreen({ navigation }) {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Welcome to Stork</Text>
-      <Text style={styles.subtitle}>Track your habits one task at a time.</Text>
+      <Text style={styles.subtitle}>Track workouts, climb the leaderboard, and redeem free classes.</Text>
 
       <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Login')}>
         <Text style={styles.buttonText}>Login</Text>

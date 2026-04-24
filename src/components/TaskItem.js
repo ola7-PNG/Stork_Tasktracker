@@ -1,13 +1,19 @@
 import React from 'react';
-import { StyleSheet, Switch, Text, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-export default function TaskItem({ task, onToggleComplete, onDelete }) {
+export default function TaskItem({ workout, onDelete }) {
+  const dateLabel = workout.createdAt?.toDate
+    ? workout.createdAt.toDate().toLocaleDateString()
+    : 'Just now';
+
   return (
     <View style={styles.container}>
-      <Switch value={task.completed} onValueChange={() => onToggleComplete(task)} />
-      <Text style={[styles.title, task.completed && styles.completed]}>{task.title}</Text>
-      <TouchableOpacity onPress={() => onDelete(task.id)}>
-        <Text style={styles.delete}>Delete</Text>
+      <View style={styles.metaWrap}>
+        <Text style={styles.title}>{workout.title}</Text>
+        <Text style={styles.date}>{dateLabel}</Text>
+      </View>
+      <TouchableOpacity onPress={() => onDelete(workout.id)}>
+        <Text style={styles.delete}>Remove</Text>
       </TouchableOpacity>
     </View>
   );
@@ -17,6 +23,7 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
     backgroundColor: '#fff',
     borderRadius: 12,
     padding: 12,
@@ -24,15 +31,18 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#e6ecf5',
   },
+  metaWrap: {
+    flexShrink: 1,
+  },
   title: {
-    flex: 1,
-    marginLeft: 10,
     fontSize: 16,
     color: '#0b1f44',
+    fontWeight: '600',
+    marginBottom: 2,
   },
-  completed: {
-    textDecorationLine: 'line-through',
-    color: '#8e9ab1',
+  date: {
+    fontSize: 13,
+    color: '#7a879f',
   },
   delete: {
     color: '#f04f4f',
