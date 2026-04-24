@@ -1,0 +1,140 @@
+// Shared friend data so Leaderboard and FriendProfile read from one place.
+
+import { colors } from '../theme';
+
+export const AVATAR_GRADIENTS = {
+  M: [colors.pink, '#E590B8'],
+  J: ['#D4A574', colors.berry],
+  O: [colors.pink, colors.berry],
+  Z: ['#F6BAD6', '#C96A95'],
+  S: ['#E08FB5', '#7A2A3F'],
+  R: ['#FBDDEB', '#B85278'],
+  L: ['#F6BAD6', '#5B1A29'],
+};
+
+export const FRIENDS = [
+  {
+    id: 1,
+    name: 'Mia',
+    avatar: 'M',
+    level: 14,
+    xp: 2180,
+    streak: 28,
+    berries: 3200,
+    achievements: 18,
+    title: 'Streak Champion',
+    today: [
+      { emoji: '💧', title: '8 glasses of water', done: true },
+      { emoji: '🏃', title: 'Morning run · 5k', done: true },
+      { emoji: '🧘', title: 'Meditate 15 min', done: true },
+      { emoji: '📚', title: 'Read chapter 5', done: true },
+      { emoji: '👟', title: '12k steps', done: false },
+    ],
+  },
+  {
+    id: 2,
+    name: 'Jay',
+    avatar: 'J',
+    level: 12,
+    xp: 1890,
+    streak: 21,
+    berries: 2400,
+    achievements: 15,
+    title: 'Early Riser',
+    today: [
+      { emoji: '🌅', title: 'Wake up at 6am', done: true },
+      { emoji: '💧', title: '8 glasses of water', done: true },
+      { emoji: '🏋️', title: 'Gym workout', done: true },
+      { emoji: '📚', title: 'Read 30 min', done: false },
+    ],
+  },
+  {
+    id: 3,
+    name: 'Ola',
+    avatar: 'O',
+    level: 8,
+    xp: 1240,
+    streak: 12,
+    berries: 1240,
+    achievements: 8,
+    title: 'Berry Champion',
+    you: true,
+    today: [
+      { emoji: '💧', title: 'Drink 8 glasses of water', done: true },
+      { emoji: '🧘', title: 'Meditate for 10 minutes', done: true },
+      { emoji: '🏃', title: 'Morning workout', done: true },
+      { emoji: '📚', title: 'Read for 30 minutes', done: false },
+      { emoji: '👟', title: 'Hit 10,000 steps', done: false },
+    ],
+  },
+  {
+    id: 4,
+    name: 'Zoe',
+    avatar: 'Z',
+    level: 6,
+    xp: 980,
+    streak: 7,
+    berries: 890,
+    achievements: 6,
+    title: 'Zen Seeker',
+    today: [
+      { emoji: '🧘', title: 'Morning meditation', done: true },
+      { emoji: '🥗', title: 'Healthy lunch', done: true },
+      { emoji: '💧', title: 'Hydration goal', done: false },
+      { emoji: '📖', title: 'Journal entry', done: false },
+    ],
+  },
+  {
+    id: 5,
+    name: 'Sam',
+    avatar: 'S',
+    level: 5,
+    xp: 850,
+    streak: 5,
+    berries: 720,
+    achievements: 5,
+    title: 'Rising Star',
+    today: [
+      { emoji: '💧', title: 'Water goal', done: true },
+      { emoji: '🚶', title: 'Afternoon walk', done: true },
+      { emoji: '🧘', title: 'Breathing exercise', done: false },
+      { emoji: '📚', title: 'Read 20 min', done: false },
+    ],
+  },
+  {
+    id: 6,
+    name: 'Rio',
+    avatar: 'R',
+    level: 4,
+    xp: 720,
+    streak: 3,
+    berries: 540,
+    achievements: 3,
+    title: 'Fresh Starter',
+    today: [
+      { emoji: '💧', title: 'Water goal', done: true },
+      { emoji: '🏃', title: 'Quick workout', done: false },
+      { emoji: '📚', title: 'Read 15 min', done: false },
+    ],
+  },
+  {
+    id: 7,
+    name: 'Leo',
+    avatar: 'L',
+    level: 4,
+    xp: 640,
+    streak: 2,
+    berries: 420,
+    achievements: 2,
+    title: 'Fresh Starter',
+    today: [
+      { emoji: '🧘', title: 'Meditation', done: true },
+      { emoji: '💧', title: 'Hydration', done: false },
+      { emoji: '👟', title: '8k steps', done: false },
+    ],
+  },
+];
+
+export function getFriendById(id) {
+  return FRIENDS.find((f) => f.id === id);
+}

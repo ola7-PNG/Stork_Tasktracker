@@ -1,0 +1,1468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#420D19" />
+  <title>Stork — Habits that give back</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,600&family=Figtree:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --pink: #F6BAD6;
+      --pink-50: #FDEDF4;
+      --pink-30: #FBDDEB;
+      --berry: #420D19;
+      --berry-80: #5B1A29;
+      --cream: #FAF3EE;
+      --cream-dark: #F0E5DC;
+      --ink: #2A0810;
+      --white: #FFFFFF;
+
+      --font-display: 'Fraunces', Georgia, serif;
+      --font-body: 'Figtree', -apple-system, sans-serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      font-family: var(--font-body);
+      background: var(--cream);
+      color: var(--ink);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    /* ===== GRAIN TEXTURE OVERLAY ===== */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 999;
+      opacity: 0.035;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+      mix-blend-mode: multiply;
+    }
+
+    /* ===== DESKTOP SHOWCASE ===== */
+    .showcase {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: 40px;
+      padding: 40px 60px;
+      align-items: center;
+      position: relative;
+    }
+
+    /* Decorative blob */
+    .blob {
+      position: absolute;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, var(--pink) 0%, transparent 65%);
+      opacity: 0.45;
+      filter: blur(40px);
+      pointer-events: none;
+      z-index: 0;
+    }
+    .blob-1 { top: -200px; left: -200px; }
+    .blob-2 { bottom: -200px; right: -200px; background: radial-gradient(circle, var(--berry) 0%, transparent 65%); opacity: 0.18; }
+
+    .showcase-side { position: relative; z-index: 2; }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 28px;
+    }
+    .brand-mark {
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
+      background: var(--berry);
+      color: var(--pink);
+      display: grid;
+      place-items: center;
+      font-family: var(--font-display);
+      font-weight: 600;
+      font-style: italic;
+      font-size: 24px;
+      box-shadow: 0 10px 30px -10px rgba(66, 13, 25, 0.4);
+    }
+    .brand-name {
+      font-family: var(--font-display);
+      font-weight: 400;
+      font-size: 28px;
+      letter-spacing: -0.02em;
+      color: var(--berry);
+    }
+    .brand-name em {
+      font-style: italic;
+      font-weight: 600;
+    }
+
+    .headline {
+      font-family: var(--font-display);
+      font-weight: 400;
+      font-size: clamp(44px, 5vw, 68px);
+      line-height: 0.98;
+      letter-spacing: -0.03em;
+      color: var(--berry);
+      margin-bottom: 24px;
+    }
+    .headline em {
+      font-style: italic;
+      font-weight: 500;
+      color: var(--berry);
+      position: relative;
+    }
+    .headline em::after {
+      content: "";
+      position: absolute;
+      left: 0; right: 0; bottom: 4px;
+      height: 12px;
+      background: var(--pink);
+      z-index: -1;
+      border-radius: 4px;
+    }
+
+    .lede {
+      font-size: 17px;
+      line-height: 1.55;
+      color: var(--berry-80);
+      max-width: 440px;
+      margin-bottom: 32px;
+    }
+
+    .feature-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      max-width: 440px;
+    }
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px;
+      background: var(--white);
+      border: 1px solid var(--cream-dark);
+      border-radius: 100px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--berry);
+    }
+    .chip::before {
+      content: "";
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--pink);
+    }
+
+    /* Right-side floating cards */
+    .side-right {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      align-items: flex-start;
+    }
+
+    .float-card {
+      background: var(--white);
+      border-radius: 20px;
+      padding: 20px 22px;
+      box-shadow: 0 20px 50px -20px rgba(66, 13, 25, 0.25);
+      width: 260px;
+    }
+    .float-card.dark {
+      background: var(--berry);
+      color: var(--pink-50);
+    }
+    .float-card.pink {
+      background: var(--pink);
+      color: var(--berry);
+      align-self: flex-end;
+      margin-right: 30px;
+    }
+    .float-card h4 {
+      font-family: var(--font-display);
+      font-style: italic;
+      font-weight: 500;
+      font-size: 18px;
+      margin-bottom: 8px;
+      letter-spacing: -0.01em;
+    }
+    .float-card p {
+      font-size: 13px;
+      line-height: 1.5;
+      opacity: 0.85;
+    }
+    .float-card .big-num {
+      font-family: var(--font-display);
+      font-size: 48px;
+      font-weight: 400;
+      line-height: 1;
+      letter-spacing: -0.03em;
+      margin-bottom: 4px;
+      display: block;
+    }
+
+    /* ===== PHONE FRAME ===== */
+    .phone {
+      width: 380px;
+      height: 780px;
+      background: var(--berry);
+      border-radius: 52px;
+      padding: 12px;
+      box-shadow:
+        0 60px 120px -40px rgba(66, 13, 25, 0.5),
+        0 0 0 2px rgba(66, 13, 25, 0.15),
+        inset 0 0 0 2px rgba(255,255,255,0.04);
+      position: relative;
+      z-index: 3;
+    }
+
+    .phone-screen {
+      width: 100%;
+      height: 100%;
+      background: var(--cream);
+      border-radius: 42px;
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Status bar */
+    .status-bar {
+      height: 44px;
+      padding: 0 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--berry);
+      flex-shrink: 0;
+      position: relative;
+      z-index: 5;
+    }
+    .status-icons { display: flex; gap: 6px; align-items: center; }
+    .status-icons svg { width: 16px; height: 16px; fill: var(--berry); }
+
+    /* Notch */
+    .notch {
+      position: absolute;
+      top: 8px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100px;
+      height: 28px;
+      background: var(--berry);
+      border-radius: 20px;
+      z-index: 10;
+    }
+
+    /* Screen container */
+    .screens-wrap {
+      flex: 1;
+      overflow: hidden;
+      position: relative;
+    }
+    .screen {
+      position: absolute;
+      inset: 0;
+      overflow-y: auto;
+      overflow-x: hidden;
+      padding: 4px 24px 100px;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(10px);
+      transition: opacity 0.35s ease, transform 0.35s ease;
+    }
+    .screen.active {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0);
+    }
+    .screen::-webkit-scrollbar { display: none; }
+    .screen { scrollbar-width: none; }
+
+    /* ===== TODAY SCREEN ===== */
+    .greet {
+      padding: 20px 0 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+    .greet-text .hi {
+      font-size: 13px;
+      color: var(--berry-80);
+      opacity: 0.6;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+    .greet-text h1 {
+      font-family: var(--font-display);
+      font-weight: 400;
+      font-size: 32px;
+      line-height: 1;
+      color: var(--berry);
+      letter-spacing: -0.02em;
+      margin-top: 6px;
+    }
+    .greet-text h1 em { font-style: italic; font-weight: 500; }
+
+    .avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--pink) 0%, var(--pink-30) 100%);
+      display: grid;
+      place-items: center;
+      font-family: var(--font-display);
+      font-weight: 600;
+      color: var(--berry);
+      font-size: 16px;
+      border: 2px solid var(--white);
+      box-shadow: 0 4px 12px -4px rgba(66, 13, 25, 0.3);
+    }
+
+    /* Streak + Berry card (hero) */
+    .hero-card {
+      background: var(--berry);
+      color: var(--pink-50);
+      border-radius: 28px;
+      padding: 24px;
+      position: relative;
+      overflow: hidden;
+      margin-bottom: 22px;
+    }
+    .hero-card::before {
+      content: "";
+      position: absolute;
+      width: 220px;
+      height: 220px;
+      background: radial-gradient(circle, var(--pink) 0%, transparent 70%);
+      opacity: 0.25;
+      top: -80px;
+      right: -60px;
+      border-radius: 50%;
+    }
+    .hero-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      position: relative;
+      z-index: 2;
+    }
+    .hero-label {
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--pink);
+      font-weight: 600;
+    }
+    .berry-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(246, 186, 214, 0.15);
+      padding: 6px 12px;
+      border-radius: 100px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--pink);
+      backdrop-filter: blur(10px);
+    }
+    .berry-dot {
+      width: 8px; height: 8px;
+      background: var(--pink);
+      border-radius: 50%;
+    }
+
+    .streak-row {
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+      position: relative;
+      z-index: 2;
+    }
+    .streak-num {
+      font-family: var(--font-display);
+      font-size: 72px;
+      font-weight: 400;
+      line-height: 0.9;
+      letter-spacing: -0.04em;
+      color: var(--white);
+    }
+    .streak-num em { font-style: italic; font-weight: 500; color: var(--pink); }
+    .streak-info {
+      font-family: var(--font-display);
+      font-style: italic;
+      font-size: 18px;
+      color: var(--pink);
+      line-height: 1.2;
+    }
+    .streak-sub {
+      font-size: 12px;
+      color: var(--pink-50);
+      opacity: 0.75;
+      margin-top: 2px;
+      font-family: var(--font-body);
+      font-style: normal;
+    }
+
+    /* Progress bar inside hero */
+    .xp-bar {
+      margin-top: 20px;
+      position: relative;
+      z-index: 2;
+    }
+    .xp-head {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      margin-bottom: 8px;
+    }
+    .xp-head span:first-child { color: var(--pink); font-weight: 600; }
+    .xp-head span:last-child { color: var(--pink-50); opacity: 0.7; }
+    .xp-track {
+      height: 6px;
+      background: rgba(246, 186, 214, 0.2);
+      border-radius: 100px;
+      overflow: hidden;
+    }
+    .xp-fill {
+      height: 100%;
+      width: 68%;
+      background: linear-gradient(90deg, var(--pink) 0%, var(--white) 100%);
+      border-radius: 100px;
+      box-shadow: 0 0 12px rgba(246, 186, 214, 0.6);
+      animation: fillXp 1.2s ease forwards;
+      transform-origin: left;
+    }
+    @keyframes fillXp {
+      from { width: 0%; }
+      to { width: 68%; }
+    }
+
+    /* Stats grid */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 26px;
+    }
+    .stat-card {
+      background: var(--white);
+      border: 1px solid var(--cream-dark);
+      border-radius: 18px;
+      padding: 14px 10px;
+      text-align: center;
+    }
+    .stat-card .num {
+      font-family: var(--font-display);
+      font-size: 24px;
+      font-weight: 500;
+      color: var(--berry);
+      line-height: 1;
+    }
+    .stat-card .num em { font-style: italic; }
+    .stat-card .lbl {
+      font-size: 10px;
+      color: var(--berry-80);
+      opacity: 0.65;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-top: 4px;
+      font-weight: 600;
+    }
+
+    /* Section headers */
+    .sect-head {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      margin: 6px 0 14px;
+    }
+    .sect-title {
+      font-family: var(--font-display);
+      font-size: 22px;
+      font-weight: 500;
+      color: var(--berry);
+      letter-spacing: -0.02em;
+    }
+    .sect-title em { font-style: italic; }
+    .sect-link {
+      font-size: 12px;
+      color: var(--berry-80);
+      opacity: 0.6;
+      font-weight: 500;
+      text-decoration: none;
+    }
+
+    /* Task cards */
+    .tasks { display: flex; flex-direction: column; gap: 10px; }
+
+    .task {
+      background: var(--white);
+      border: 1px solid var(--cream-dark);
+      border-radius: 18px;
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+      user-select: none;
+    }
+    .task:hover { transform: translateY(-1px); box-shadow: 0 10px 20px -10px rgba(66, 13, 25, 0.12); }
+    .task.done {
+      background: var(--pink-50);
+      border-color: var(--pink-30);
+    }
+    .task.done .task-title { text-decoration: line-through; opacity: 0.5; }
+
+    .check {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      border: 2px solid var(--cream-dark);
+      flex-shrink: 0;
+      display: grid;
+      place-items: center;
+      transition: all 0.2s ease;
+    }
+    .task.done .check {
+      background: var(--berry);
+      border-color: var(--berry);
+    }
+    .check svg {
+      width: 14px;
+      height: 14px;
+      stroke: var(--pink);
+      stroke-width: 3;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+    .task.done .check svg { opacity: 1; }
+
+    .task-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      background: var(--pink-50);
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+      font-size: 20px;
+    }
+    .task.done .task-icon { background: var(--pink-30); }
+
+    .task-body { flex: 1; min-width: 0; }
+    .task-title {
+      font-weight: 600;
+      font-size: 14px;
+      color: var(--berry);
+      margin-bottom: 2px;
+    }
+    .task-meta {
+      font-size: 11px;
+      color: var(--berry-80);
+      opacity: 0.6;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .task-xp {
+      font-family: var(--font-display);
+      font-style: italic;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--berry);
+      flex-shrink: 0;
+    }
+    .task-xp em { color: var(--pink); font-style: normal; font-family: var(--font-body); font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; margin-left: 2px; }
+
+    /* ===== QUESTS SCREEN ===== */
+    .page-title {
+      padding: 20px 0 18px;
+    }
+    .page-title h1 {
+      font-family: var(--font-display);
+      font-size: 38px;
+      font-weight: 400;
+      color: var(--berry);
+      line-height: 1;
+      letter-spacing: -0.03em;
+    }
+    .page-title h1 em { font-style: italic; font-weight: 500; }
+    .page-title p {
+      font-size: 13px;
+      color: var(--berry-80);
+      opacity: 0.6;
+      margin-top: 6px;
+    }
+
+    .tabs-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+    }
+    .tabs-row::-webkit-scrollbar { display: none; }
+    .tab-pill {
+      padding: 8px 16px;
+      border-radius: 100px;
+      font-size: 12px;
+      font-weight: 600;
+      background: var(--white);
+      color: var(--berry-80);
+      border: 1px solid var(--cream-dark);
+      cursor: pointer;
+      white-space: nowrap;
+      flex-shrink: 0;
+      transition: all 0.2s ease;
+    }
+    .tab-pill.active {
+      background: var(--berry);
+      color: var(--pink);
+      border-color: var(--berry);
+    }
+
+    .quest-card {
+      background: var(--white);
+      border: 1px solid var(--cream-dark);
+      border-radius: 22px;
+      padding: 18px;
+      margin-bottom: 12px;
+      position: relative;
+      overflow: hidden;
+    }
+    .quest-card.featured {
+      background: var(--pink);
+      border-color: var(--pink);
+    }
+    .quest-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 12px;
+    }
+    .quest-icon {
+      font-size: 28px;
+      line-height: 1;
+    }
+    .quest-reward {
+      background: var(--berry);
+      color: var(--pink);
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 100px;
+      letter-spacing: 0.05em;
+    }
+    .quest-card.featured .quest-reward {
+      background: var(--berry);
+    }
+    .quest-title {
+      font-family: var(--font-display);
+      font-size: 20px;
+      font-weight: 500;
+      color: var(--berry);
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+      margin-bottom: 6px;
+    }
+    .quest-title em { font-style: italic; }
+    .quest-desc {
+      font-size: 12px;
+      color: var(--berry-80);
+      opacity: 0.7;
+      line-height: 1.4;
+      margin-bottom: 14px;
+    }
+    .quest-progress {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .qp-track {
+      flex: 1;
+      height: 5px;
+      background: rgba(66, 13, 25, 0.1);
+      border-radius: 100px;
+      overflow: hidden;
+    }
+    .quest-card.featured .qp-track { background: rgba(66, 13, 25, 0.2); }
+    .qp-fill {
+      height: 100%;
+      background: var(--berry);
+      border-radius: 100px;
+    }
+    .qp-text {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--berry);
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* ===== REWARDS SCREEN ===== */
+    .balance-banner {
+      background: var(--berry);
+      color: var(--pink-50);
+      border-radius: 28px;
+      padding: 22px 24px;
+      margin: 4px 0 22px;
+      position: relative;
+      overflow: hidden;
+    }
+    .balance-banner::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 100% 50%, rgba(246, 186, 214, 0.2) 0%, transparent 60%);
+      pointer-events: none;
+    }
+    .balance-banner .label {
+      font-size: 11px;
+      color: var(--pink);
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+    .balance-banner .amount {
+      font-family: var(--font-display);
+      font-size: 48px;
+      font-weight: 400;
+      color: var(--white);
+      line-height: 1;
+      letter-spacing: -0.03em;
+    }
+    .balance-banner .amount em { font-style: italic; color: var(--pink); }
+    .balance-banner .amount-sub {
+      font-size: 12px;
+      color: var(--pink);
+      opacity: 0.7;
+      margin-top: 8px;
+    }
+
+    .rewards-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .reward {
+      background: var(--white);
+      border: 1px solid var(--cream-dark);
+      border-radius: 20px;
+      padding: 16px;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+      position: relative;
+    }
+    .reward:hover { transform: translateY(-2px); }
+    .reward-logo {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: var(--pink-50);
+      display: grid;
+      place-items: center;
+      font-family: var(--font-display);
+      font-weight: 600;
+      font-size: 18px;
+      color: var(--berry);
+      margin-bottom: 12px;
+      font-style: italic;
+    }
+    .reward-brand {
+      font-weight: 700;
+      font-size: 13px;
+      color: var(--berry);
+      margin-bottom: 2px;
+    }
+    .reward-desc {
+      font-size: 11px;
+      color: var(--berry-80);
+      opacity: 0.65;
+      line-height: 1.3;
+      margin-bottom: 12px;
+      min-height: 28px;
+    }
+    .reward-cost {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .reward-price {
+      font-family: var(--font-display);
+      font-style: italic;
+      font-size: 16px;
+      font-weight: 500;
+      color: var(--berry);
+    }
+    .reward-price em { color: var(--pink); font-style: normal; font-family: var(--font-body); font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; margin-left: 3px; }
+    .reward-go {
+      width: 28px;
+      height: 28px;
+      background: var(--berry);
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      color: var(--pink);
+      font-size: 14px;
+    }
+
+    /* ===== PROFILE SCREEN ===== */
+    .profile-hero {
+      text-align: center;
+      padding: 24px 0 20px;
+    }
+    .big-avatar {
+      width: 88px;
+      height: 88px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--pink) 0%, var(--berry) 180%);
+      display: grid;
+      place-items: center;
+      font-family: var(--font-display);
+      font-weight: 600;
+      font-style: italic;
+      color: var(--white);
+      font-size: 36px;
+      margin: 0 auto 14px;
+      border: 3px solid var(--white);
+      box-shadow: 0 10px 30px -10px rgba(66, 13, 25, 0.3);
+    }
+    .profile-name {
+      font-family: var(--font-display);
+      font-size: 26px;
+      font-weight: 500;
+      color: var(--berry);
+      letter-spacing: -0.02em;
+    }
+    .profile-name em { font-style: italic; }
+    .level-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--pink);
+      color: var(--berry);
+      padding: 6px 14px;
+      border-radius: 100px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      margin-top: 8px;
+    }
+    .level-badge::before {
+      content: "★";
+      font-size: 10px;
+    }
+
+    .profile-stats {
+      background: var(--white);
+      border: 1px solid var(--cream-dark);
+      border-radius: 22px;
+      padding: 18px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      margin: 16px 0 22px;
+    }
+    .pstat {
+      text-align: center;
+      padding: 0 8px;
+      border-right: 1px solid var(--cream-dark);
+    }
+    .pstat:last-child { border-right: none; }
+    .pstat .n {
+      font-family: var(--font-display);
+      font-size: 26px;
+      font-weight: 500;
+      color: var(--berry);
+      line-height: 1;
+      letter-spacing: -0.02em;
+    }
+    .pstat .n em { font-style: italic; }
+    .pstat .l {
+      font-size: 10px;
+      color: var(--berry-80);
+      opacity: 0.6;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-weight: 600;
+      margin-top: 4px;
+    }
+
+    .badges-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+    .badge {
+      aspect-ratio: 1;
+      background: var(--white);
+      border: 1px solid var(--cream-dark);
+      border-radius: 16px;
+      display: grid;
+      place-items: center;
+      font-size: 24px;
+      position: relative;
+    }
+    .badge.locked {
+      opacity: 0.35;
+      filter: grayscale(1);
+    }
+    .badge.earned {
+      background: var(--pink);
+      border-color: var(--pink);
+    }
+
+    /* ===== BOTTOM NAV ===== */
+    .bottom-nav {
+      position: absolute;
+      bottom: 14px;
+      left: 14px;
+      right: 14px;
+      background: var(--berry);
+      border-radius: 28px;
+      padding: 12px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 4px;
+      box-shadow: 0 10px 30px -10px rgba(66, 13, 25, 0.4);
+      z-index: 20;
+    }
+    .nav-btn {
+      background: transparent;
+      border: none;
+      color: var(--pink);
+      opacity: 0.5;
+      padding: 10px 4px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+      border-radius: 18px;
+      transition: all 0.25s ease;
+      font-family: var(--font-body);
+    }
+    .nav-btn svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .nav-btn .lbl {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+    }
+    .nav-btn.active {
+      background: var(--pink);
+      color: var(--berry);
+      opacity: 1;
+    }
+
+    /* ===== MOBILE RESPONSIVE ===== */
+    @media (max-width: 1024px) {
+      .showcase {
+        grid-template-columns: 1fr;
+        padding: 24px 20px;
+        gap: 28px;
+      }
+      .showcase-side { text-align: center; }
+      .showcase-side.side-right { display: none; }
+      .brand { justify-content: center; }
+      .feature-chips { justify-content: center; }
+      .lede { margin-left: auto; margin-right: auto; }
+      .phone { margin: 0 auto; }
+    }
+
+    @media (max-width: 480px) {
+      .showcase { padding: 16px 0; gap: 20px; }
+      .showcase-side { padding: 0 20px; }
+      .phone {
+        width: 100vw;
+        max-width: 380px;
+        height: calc(100vh - 180px);
+        min-height: 680px;
+        border-radius: 0;
+        padding: 8px;
+        box-shadow: none;
+      }
+      .phone-screen { border-radius: 0; }
+      .headline { font-size: 38px; }
+    }
+
+    /* Reward flash animation when task checked */
+    @keyframes flashReward {
+      0% { transform: scale(0) translateY(0); opacity: 0; }
+      30% { transform: scale(1.1) translateY(-20px); opacity: 1; }
+      100% { transform: scale(0.9) translateY(-60px); opacity: 0; }
+    }
+    .xp-flash {
+      position: absolute;
+      font-family: var(--font-display);
+      font-style: italic;
+      font-weight: 600;
+      color: var(--pink);
+      background: var(--berry);
+      padding: 6px 14px;
+      border-radius: 100px;
+      font-size: 14px;
+      pointer-events: none;
+      animation: flashReward 1.2s ease forwards;
+      z-index: 100;
+      white-space: nowrap;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+
+  <main class="showcase">
+
+    <!-- LEFT INFO -->
+    <aside class="showcase-side side-left">
+      <div class="brand">
+        <div class="brand-mark">S</div>
+        <div class="brand-name">Stork<em>.</em></div>
+      </div>
+
+      <h1 class="headline">
+        Habits that<br>
+        <em>give back.</em>
+      </h1>
+
+      <p class="lede">
+        A gamified task tracker that turns your healthy routines into real-world rewards from brands you already love. Complete quests, build streaks, redeem berries.
+      </p>
+
+      <div class="feature-chips">
+        <span class="chip">Daily quests</span>
+        <span class="chip">Streak tracking</span>
+        <span class="chip">Brand rewards</span>
+        <span class="chip">XP &amp; levels</span>
+      </div>
+    </aside>
+
+    <!-- PHONE -->
+    <div class="phone">
+      <div class="phone-screen">
+        <div class="notch"></div>
+
+        <div class="status-bar">
+          <span>9:41</span>
+          <div class="status-icons">
+            <svg viewBox="0 0 24 24"><path d="M2 16h2v4H2v-4zm4-4h2v8H6v-8zm4-4h2v12h-2V8zm4-4h2v16h-2V4zm4 2h2v14h-2V6z"/></svg>
+            <svg viewBox="0 0 24 24"><path d="M12 3C7 3 3 7 3 12s4 9 9 9 9-4 9-9-4-9-9-9zm0 16c-3.9 0-7-3.1-7-7s3.1-7 7-7 7 3.1 7 7-3.1 7-7 7z"/></svg>
+            <svg viewBox="0 0 24 24"><path d="M17 4h-3V2h-4v2H7c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H7V6h10v14z"/></svg>
+          </div>
+        </div>
+
+        <div class="screens-wrap">
+
+          <!-- TODAY SCREEN -->
+          <div class="screen active" data-screen="today">
+            <div class="greet">
+              <div class="greet-text">
+                <div class="hi">Good morning</div>
+                <h1>Hi, <em>Ola.</em></h1>
+              </div>
+              <div class="avatar">O</div>
+            </div>
+
+            <div class="hero-card">
+              <div class="hero-top">
+                <span class="hero-label">Current streak</span>
+                <span class="berry-pill"><span class="berry-dot"></span> 1,240 berries</span>
+              </div>
+              <div class="streak-row">
+                <div class="streak-num">12<em>.</em></div>
+                <div class="streak-info">
+                  days strong
+                  <div class="streak-sub">Level 8 · 340 XP to level up</div>
+                </div>
+              </div>
+              <div class="xp-bar">
+                <div class="xp-head">
+                  <span>660 / 1000 XP</span>
+                  <span>Level 9</span>
+                </div>
+                <div class="xp-track"><div class="xp-fill"></div></div>
+              </div>
+            </div>
+
+            <div class="stats-row">
+              <div class="stat-card">
+                <div class="num">3<em>/5</em></div>
+                <div class="lbl">Today</div>
+              </div>
+              <div class="stat-card">
+                <div class="num">24</div>
+                <div class="lbl">Week</div>
+              </div>
+              <div class="stat-card">
+                <div class="num">87<em>%</em></div>
+                <div class="lbl">Rate</div>
+              </div>
+            </div>
+
+            <div class="sect-head">
+              <div class="sect-title"><em>Today&rsquo;s</em> quests</div>
+              <a href="#" class="sect-link">View all</a>
+            </div>
+
+            <div class="tasks">
+              <div class="task done" onclick="toggleTask(this)">
+                <div class="check"><svg viewBox="0 0 24 24"><polyline points="4 12 10 18 20 6"/></svg></div>
+                <div class="task-icon">💧</div>
+                <div class="task-body">
+                  <div class="task-title">Drink 8 glasses of water</div>
+                  <div class="task-meta">Wellness · Daily</div>
+                </div>
+                <div class="task-xp">+20<em>xp</em></div>
+              </div>
+
+              <div class="task done" onclick="toggleTask(this)">
+                <div class="check"><svg viewBox="0 0 24 24"><polyline points="4 12 10 18 20 6"/></svg></div>
+                <div class="task-icon">🧘‍♀️</div>
+                <div class="task-body">
+                  <div class="task-title">Meditate for 10 minutes</div>
+                  <div class="task-meta">Mindfulness · Daily</div>
+                </div>
+                <div class="task-xp">+25<em>xp</em></div>
+              </div>
+
+              <div class="task done" onclick="toggleTask(this)">
+                <div class="check"><svg viewBox="0 0 24 24"><polyline points="4 12 10 18 20 6"/></svg></div>
+                <div class="task-icon">🏃‍♀️</div>
+                <div class="task-body">
+                  <div class="task-title">Morning workout</div>
+                  <div class="task-meta">Fitness · Daily</div>
+                </div>
+                <div class="task-xp">+50<em>xp</em></div>
+              </div>
+
+              <div class="task" onclick="toggleTask(this)">
+                <div class="check"><svg viewBox="0 0 24 24"><polyline points="4 12 10 18 20 6"/></svg></div>
+                <div class="task-icon">📚</div>
+                <div class="task-body">
+                  <div class="task-title">Read for 30 minutes</div>
+                  <div class="task-meta">Learning · Daily</div>
+                </div>
+                <div class="task-xp">+30<em>xp</em></div>
+              </div>
+
+              <div class="task" onclick="toggleTask(this)">
+                <div class="check"><svg viewBox="0 0 24 24"><polyline points="4 12 10 18 20 6"/></svg></div>
+                <div class="task-icon">👟</div>
+                <div class="task-body">
+                  <div class="task-title">Hit 10,000 steps</div>
+                  <div class="task-meta">Fitness · Daily</div>
+                </div>
+                <div class="task-xp">+40<em>xp</em></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- QUESTS SCREEN -->
+          <div class="screen" data-screen="quests">
+            <div class="page-title">
+              <h1><em>Quests</em></h1>
+              <p>Bigger challenges, bigger rewards</p>
+            </div>
+
+            <div class="tabs-row">
+              <button class="tab-pill active">All</button>
+              <button class="tab-pill">Daily</button>
+              <button class="tab-pill">Weekly</button>
+              <button class="tab-pill">Monthly</button>
+              <button class="tab-pill">Special</button>
+            </div>
+
+            <div class="quest-card featured">
+              <div class="quest-head">
+                <div class="quest-icon">🏆</div>
+                <div class="quest-reward">+500 XP</div>
+              </div>
+              <div class="quest-title">The <em>Iron Month</em></div>
+              <div class="quest-desc">Complete all your daily wellness quests for 30 consecutive days.</div>
+              <div class="quest-progress">
+                <div class="qp-track"><div class="qp-fill" style="width: 40%"></div></div>
+                <div class="qp-text">12/30</div>
+              </div>
+            </div>
+
+            <div class="quest-card">
+              <div class="quest-head">
+                <div class="quest-icon">💧</div>
+                <div class="quest-reward">+150 XP</div>
+              </div>
+              <div class="quest-title"><em>Hydration</em> hero</div>
+              <div class="quest-desc">Hit your water goal 7 days in a row this week.</div>
+              <div class="quest-progress">
+                <div class="qp-track"><div class="qp-fill" style="width: 71%"></div></div>
+                <div class="qp-text">5/7</div>
+              </div>
+            </div>
+
+            <div class="quest-card">
+              <div class="quest-head">
+                <div class="quest-icon">📖</div>
+                <div class="quest-reward">+200 XP</div>
+              </div>
+              <div class="quest-title">Read a <em>whole book</em></div>
+              <div class="quest-desc">Finish one book within 14 days.</div>
+              <div class="quest-progress">
+                <div class="qp-track"><div class="qp-fill" style="width: 55%"></div></div>
+                <div class="qp-text">170/310 pg</div>
+              </div>
+            </div>
+
+            <div class="quest-card">
+              <div class="quest-head">
+                <div class="quest-icon">🧘</div>
+                <div class="quest-reward">+100 XP</div>
+              </div>
+              <div class="quest-title"><em>Zen</em> week</div>
+              <div class="quest-desc">Meditate every day for 7 days straight.</div>
+              <div class="quest-progress">
+                <div class="qp-track"><div class="qp-fill" style="width: 28%"></div></div>
+                <div class="qp-text">2/7</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- REWARDS SCREEN -->
+          <div class="screen" data-screen="rewards">
+            <div class="page-title">
+              <h1><em>Rewards</em></h1>
+              <p>Redeem your berries for real-world perks</p>
+            </div>
+
+            <div class="balance-banner">
+              <div class="label">Your balance</div>
+              <div class="amount">1,240<em> ·</em></div>
+              <div class="amount-sub">berries earned this month</div>
+            </div>
+
+            <div class="sect-head">
+              <div class="sect-title">Shop <em>rewards</em></div>
+              <a href="#" class="sect-link">Filter</a>
+            </div>
+
+            <div class="rewards-grid">
+              <div class="reward">
+                <div class="reward-logo">sb</div>
+                <div class="reward-brand">Starbucks</div>
+                <div class="reward-desc">$5 gift card for any drink</div>
+                <div class="reward-cost">
+                  <div class="reward-price">500<em>brr</em></div>
+                  <div class="reward-go">→</div>
+                </div>
+              </div>
+
+              <div class="reward">
+                <div class="reward-logo">sp</div>
+                <div class="reward-brand">Spotify</div>
+                <div class="reward-desc">1 month Premium free</div>
+                <div class="reward-cost">
+                  <div class="reward-price">1,200<em>brr</em></div>
+                  <div class="reward-go">→</div>
+                </div>
+              </div>
+
+              <div class="reward">
+                <div class="reward-logo">nk</div>
+                <div class="reward-brand">Nike</div>
+                <div class="reward-desc">10% off your next order</div>
+                <div class="reward-cost">
+                  <div class="reward-price">1,000<em>brr</em></div>
+                  <div class="reward-go">→</div>
+                </div>
+              </div>
+
+              <div class="reward">
+                <div class="reward-logo">sh</div>
+                <div class="reward-brand">Sephora</div>
+                <div class="reward-desc">15% off sitewide</div>
+                <div class="reward-cost">
+                  <div class="reward-price">800<em>brr</em></div>
+                  <div class="reward-go">→</div>
+                </div>
+              </div>
+
+              <div class="reward">
+                <div class="reward-logo">ue</div>
+                <div class="reward-brand">Uber Eats</div>
+                <div class="reward-desc">$10 off your next order</div>
+                <div class="reward-cost">
+                  <div class="reward-price">700<em>brr</em></div>
+                  <div class="reward-go">→</div>
+                </div>
+              </div>
+
+              <div class="reward">
+                <div class="reward-logo">nx</div>
+                <div class="reward-brand">Netflix</div>
+                <div class="reward-desc">1 month subscription</div>
+                <div class="reward-cost">
+                  <div class="reward-price">1,500<em>brr</em></div>
+                  <div class="reward-go">→</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- PROFILE SCREEN -->
+          <div class="screen" data-screen="profile">
+            <div class="profile-hero">
+              <div class="big-avatar">O</div>
+              <div class="profile-name">Ola <em>Smolina</em></div>
+              <div class="level-badge">Level 8 · Berry Champion</div>
+            </div>
+
+            <div class="profile-stats">
+              <div class="pstat">
+                <div class="n">12<em>d</em></div>
+                <div class="l">Streak</div>
+              </div>
+              <div class="pstat">
+                <div class="n">247</div>
+                <div class="l">Tasks done</div>
+              </div>
+              <div class="pstat">
+                <div class="n">1.2<em>k</em></div>
+                <div class="l">Berries</div>
+              </div>
+            </div>
+
+            <div class="sect-head">
+              <div class="sect-title"><em>Achievements</em></div>
+              <a href="#" class="sect-link">8 of 24</a>
+            </div>
+
+            <div class="badges-grid">
+              <div class="badge earned" title="Early Bird">🌅</div>
+              <div class="badge earned" title="Streak Starter">🔥</div>
+              <div class="badge earned" title="Bookworm">📚</div>
+              <div class="badge earned" title="Zen Master">🧘</div>
+              <div class="badge earned" title="Hydrator">💧</div>
+              <div class="badge earned" title="Step Machine">👟</div>
+              <div class="badge earned" title="Early Adopter">⭐</div>
+              <div class="badge earned" title="First Reward">🎁</div>
+              <div class="badge locked" title="Locked">🏆</div>
+              <div class="badge locked" title="Locked">👑</div>
+              <div class="badge locked" title="Locked">💎</div>
+              <div class="badge locked" title="Locked">🌟</div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- BOTTOM NAV -->
+        <nav class="bottom-nav">
+          <button class="nav-btn active" data-target="today">
+            <svg viewBox="0 0 24 24"><path d="M3 12 L12 3 L21 12 M5 10 V21 H19 V10"/></svg>
+            <span class="lbl">Today</span>
+          </button>
+          <button class="nav-btn" data-target="quests">
+            <svg viewBox="0 0 24 24"><polyline points="4 12 10 18 20 6"/><circle cx="12" cy="12" r="9"/></svg>
+            <span class="lbl">Quests</span>
+          </button>
+          <button class="nav-btn" data-target="rewards">
+            <svg viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="14" rx="2"/><path d="M12 7 V21 M7 7 C7 4 9 3 12 5 C15 3 17 4 17 7"/></svg>
+            <span class="lbl">Rewards</span>
+          </button>
+          <button class="nav-btn" data-target="profile">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21 C4 16 8 14 12 14 C16 14 20 16 20 21"/></svg>
+            <span class="lbl">Profile</span>
+          </button>
+        </nav>
+
+      </div>
+    </div>
+
+    <!-- RIGHT FLOATING CARDS -->
+    <aside class="showcase-side side-right">
+      <div class="float-card dark">
+        <h4>Real rewards from <em>real brands</em></h4>
+        <p>Starbucks, Spotify, Nike, Sephora and more. Turn berries into perks.</p>
+      </div>
+
+      <div class="float-card pink">
+        <span class="big-num">1,240</span>
+        <p style="font-weight: 600;">Berries earned this month. Built for the habit-driven.</p>
+      </div>
+
+      <div class="float-card">
+        <h4>Keep the <em>streak alive</em></h4>
+        <p>Consistent routines unlock special quests and multiplier bonuses.</p>
+      </div>
+    </aside>
+
+  </main>
+
+  <script>
+    // Tab switching
+    document.querySelectorAll('.nav-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const target = btn.dataset.target;
+        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        document.querySelectorAll('.screen').forEach(s => {
+          s.classList.toggle('active', s.dataset.screen === target);
+          if (s.dataset.screen === target) s.scrollTop = 0;
+        });
+      });
+    });
+
+    // Quest pill switching (visual only)
+    document.querySelectorAll('.tab-pill').forEach(p => {
+      p.addEventListener('click', () => {
+        document.querySelectorAll('.tab-pill').forEach(x => x.classList.remove('active'));
+        p.classList.add('active');
+      });
+    });
+
+    // Task toggle with XP flash
+    function toggleTask(el) {
+      const wasDone = el.classList.contains('done');
+      el.classList.toggle('done');
+
+      if (!wasDone) {
+        const xpEl = el.querySelector('.task-xp');
+        const xpText = xpEl ? xpEl.textContent.trim() : '+10xp';
+        const flash = document.createElement('div');
+        flash.className = 'xp-flash';
+        flash.textContent = xpText;
+        const rect = el.getBoundingClientRect();
+        const phoneRect = document.querySelector('.phone-screen').getBoundingClientRect();
+        flash.style.left = (rect.right - phoneRect.left - 90) + 'px';
+        flash.style.top = (rect.top - phoneRect.top + 8) + 'px';
+        document.querySelector('.phone-screen').appendChild(flash);
+        setTimeout(() => flash.remove(), 1200);
+      }
+    }
+  </script>
+
+</body>
+</html>
