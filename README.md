@@ -1,16 +1,21 @@
 # Stork_Tasktracker
 
-A simple React Native (Expo) MVP habit tracker called **Stork** with Firebase Authentication and Firestore task tracking.
+A React Native (Expo) habit-building app called **Stork** with Firebase Authentication, workout progress tracking, reward redemption, and friend leaderboards.
 
 ## Features
 
 - Email/password sign up and login with Firebase Authentication
 - User profile record created in Firestore on sign up
-- Task CRUD per authenticated user:
-  - Create tasks
-  - List tasks
-  - Toggle complete/incomplete
-  - Delete tasks
+- Workout habit tracking:
+  - Log workouts
+  - View and remove recent workouts
+  - Track total completed workouts
+- Real-life reward system:
+  - Unlock a free workout class every 20 workouts
+  - Redeem unlocked classes in-app
+- Leaderboard:
+  - Compete with friends by total workout count
+  - See top users and your position
 
 ## Project Structure
 

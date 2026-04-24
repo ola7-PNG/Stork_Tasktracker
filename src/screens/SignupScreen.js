@@ -24,6 +24,9 @@ export default function SignupScreen() {
       await setDoc(doc(db, 'users', user.uid), {
         id: user.uid,
         email: user.email,
+        displayName: user.email?.split('@')[0] || 'Athlete',
+        totalWorkouts: 0,
+        rewardsRedeemed: 0,
         createdAt: serverTimestamp(),
       });
     } catch (error) {
