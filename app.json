@@ -28,7 +28,7 @@
     "web": {
       "favicon": "./assets/favicon.png",
       "bundler": "metro",
-      "output": "static",
+      "output": "single",
       "baseUrl": "/Stork_Tasktracker/app"
     },
     "plugins": [
