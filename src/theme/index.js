@@ -20,15 +20,15 @@ export const colors = {
 
 export const fonts = {
   // Display — chunky rounded Fredoka, matches the logo's playful bubble energy
-  display: 'Fredoka_500Medium',
-  displaySemi: 'Fredoka_600SemiBold',
-  displayBold: 'Fredoka_700Bold',
+  display: 'System',
+  displaySemi: 'System',
+  displayBold: 'System',
 
   // Body — Figtree for UI text, metadata, form labels
-  body: 'Figtree_400Regular',
-  bodyMedium: 'Figtree_500Medium',
-  bodySemi: 'Figtree_600SemiBold',
-  bodyBold: 'Figtree_700Bold',
+  body: 'System',
+  bodyMedium: 'System',
+  bodySemi: 'System',
+  bodyBold: 'System',
 };
 
 export const radius = {

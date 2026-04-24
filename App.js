@@ -24,15 +24,7 @@ import { colors } from './src/theme';
 SplashScreen.preventAutoHideAsync().catch(() => {});
 
 export default function App() {
-  const [fontsLoaded] = useFonts({
-    Fredoka_500Medium,
-    Fredoka_600SemiBold,
-    Fredoka_700Bold,
-    Figtree_400Regular,
-    Figtree_500Medium,
-    Figtree_600SemiBold,
-    Figtree_700Bold,
-  });
+  const fontsLoaded = true;
 
   const onLayoutRootView = useCallback(async () => {
     if (fontsLoaded) {
