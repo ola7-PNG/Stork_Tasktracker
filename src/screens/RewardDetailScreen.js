@@ -4,326 +4,340 @@ import {
   Text,
   Pressable,
   StyleSheet,
-  ScrollView,
   Animated,
-  Easing,
+  ScrollView,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 
 import { colors, fonts } from '../theme';
+import { useUserStore, userStore } from '../state/userStore';
 
-// Generate a fake gift-card code for the prototype
+// Generate a fake redemption code like STORK-A4F2-9B1C
 function generateCode() {
-  const block = () =>
-    Math.random().toString(36).substring(2, 6).toUpperCase();
-  return `STORK-${block()}-${block()}`;
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  const block = (n) =>
+    Array.from(
+      { length: n },
+      () => chars[Math.floor(Math.random() * chars.length)]
+    ).join('');
+  return `STORK-${block(4)}-${block(4)}`;
 }
 
 export default function RewardDetailScreen({ route, navigation }) {
-  const { reward, balance = 1240 } = route.params || {};
-  const [state, setState] = useState('confirm'); // 'confirm' | 'success'
-  const [code] = useState(() => generateCode());
-  const [copied, setCopied] = useState(false);
+  const brand = route?.params?.brand;
+  const { berries } = useUserStore();
 
-  const costNum = parseInt(String(reward.cost).replace(/,/g, ''), 10);
-  const balanceAfter = balance - costNum;
-  const canAfford = balanceAfter >= 0;
+  const [confirmed, setConfirmed] = useState(false);
+  const [code, setCode] = useState('');
+  const [errorMsg, setErrorMsg] = useState('');
 
-  // Animation refs
+  // Animations
+  const entryAnim = useRef(new Animated.Value(0)).current;
+  const successAnim = useRef(new Animated.Value(0)).current;
   const checkScale = useRef(new Animated.Value(0)).current;
-  const contentOpacity = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    if (state === 'success') {
-      Animated.sequence([
+    Animated.timing(entryAnim, {
+      toValue: 1,
+      duration: 500,
+      useNativeDriver: true,
+    }).start();
+  }, []);
+
+  useEffect(() => {
+    if (confirmed) {
+      Animated.parallel([
+        Animated.timing(successAnim, {
+          toValue: 1,
+          duration: 500,
+          useNativeDriver: true,
+        }),
         Animated.spring(checkScale, {
           toValue: 1,
           friction: 5,
-          tension: 80,
-          useNativeDriver: true,
-        }),
-        Animated.timing(contentOpacity, {
-          toValue: 1,
-          duration: 400,
-          easing: Easing.out(Easing.quad),
+          tension: 110,
           useNativeDriver: true,
         }),
       ]).start();
     }
-  }, [state]);
+  }, [confirmed]);
 
-  const handleRedeem = () => {
-    if (!canAfford) return;
-    setState('success');
-  };
-
-  const handleCopy = () => {
-    // Clipboard requires expo-clipboard — omitted here to avoid extra dep
-    // In production, import * as Clipboard from 'expo-clipboard';
-    // await Clipboard.setStringAsync(code);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
-
-  // ========== CONFIRM STATE ==========
-  if (state === 'confirm') {
+  if (!brand) {
+    // Shouldn't normally happen — defensive fallback
     return (
       <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
-        <View style={styles.topBar}>
-          <Pressable
-            onPress={() => navigation.goBack()}
-            style={styles.iconBtn}
-            hitSlop={10}
-          >
-            <Ionicons name="close" size={22} color={colors.berry} />
-          </Pressable>
-          <Text style={styles.topBarTitle}>Redeem</Text>
-          <View style={{ width: 40 }} />
-        </View>
-
-        <ScrollView
-          contentContainerStyle={styles.scroll}
-          showsVerticalScrollIndicator={false}
-        >
-          {/* Brand card */}
-          <LinearGradient
-            colors={[colors.pink, '#F9C8DE']}
-            style={styles.brandCard}
-          >
-            <View style={styles.brandLogoBig}>
-              <Text style={styles.brandLogoBigText}>{reward.logo}</Text>
-            </View>
-            <Text style={styles.brandNameBig}>{reward.brand}</Text>
-            <Text style={styles.brandDesc}>{reward.desc}</Text>
-            <View style={styles.costChip}>
-              <View style={styles.berryDot} />
-              <Text style={styles.costChipText}>
-                {reward.cost} berries
-              </Text>
-            </View>
-          </LinearGradient>
-
-          {/* Balance breakdown */}
-          <View style={styles.balanceBox}>
-            <View style={styles.balanceRow}>
-              <Text style={styles.balanceLabel}>Your balance</Text>
-              <Text style={styles.balanceValue}>
-                {balance.toLocaleString()}
-              </Text>
-            </View>
-            <View style={styles.balanceDivider} />
-            <View style={styles.balanceRow}>
-              <Text style={styles.balanceLabel}>Cost</Text>
-              <Text style={[styles.balanceValue, { color: colors.berry }]}>
-                −{reward.cost}
-              </Text>
-            </View>
-            <View style={styles.balanceDivider} />
-            <View style={styles.balanceRow}>
-              <Text style={[styles.balanceLabel, styles.balanceLabelBold]}>
-                After redemption
-              </Text>
-              <Text
-                style={[
-                  styles.balanceValue,
-                  styles.balanceValueBold,
-                  !canAfford && { color: '#B85278' },
-                ]}
-              >
-                {balanceAfter.toLocaleString()}
-              </Text>
-            </View>
-          </View>
-
-          <Text style={styles.finePrint}>
-            Redemptions are final. Your gift card code will be delivered
-            instantly and is also saved to your account.
-          </Text>
-        </ScrollView>
-
-        {/* Primary action */}
-        <View style={styles.footer}>
-          <Pressable
-            style={({ pressed }) => [
-              styles.primaryBtn,
-              !canAfford && styles.primaryBtnDisabled,
-              pressed && canAfford && { opacity: 0.9 },
-            ]}
-            onPress={handleRedeem}
-            disabled={!canAfford}
-          >
-            <Text style={styles.primaryBtnText}>
-              {canAfford
-                ? `Redeem for ${reward.cost} berries`
-                : 'Not enough berries'}
-            </Text>
-            {canAfford && (
-              <Ionicons name="arrow-forward" size={18} color={colors.pink} />
-            )}
-          </Pressable>
-        </View>
+        <Text style={{ padding: 24 }}>No reward selected.</Text>
       </SafeAreaView>
     );
   }
 
-  // ========== SUCCESS STATE ==========
+  const handleRedeem = () => {
+    setErrorMsg('');
+    const success = userStore.spendBerries(brand.cost, brand.name);
+    if (!success) {
+      setErrorMsg(
+        `Not enough berries — you need ${brand.cost - berries} more.`
+      );
+      return;
+    }
+    setCode(generateCode());
+    setConfirmed(true);
+  };
+
   return (
     <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
+      <View style={styles.topBar}>
+        <View style={styles.handle} />
+      </View>
+
       <ScrollView
-        contentContainerStyle={styles.successScroll}
+        contentContainerStyle={styles.scroll}
         showsVerticalScrollIndicator={false}
       >
-        {/* Checkmark */}
+        {confirmed ? (
+          <SuccessView
+            brand={brand}
+            code={code}
+            successAnim={successAnim}
+            checkScale={checkScale}
+            onClose={() => navigation.goBack()}
+          />
+        ) : (
+          <ConfirmView
+            brand={brand}
+            balance={berries}
+            errorMsg={errorMsg}
+            entryAnim={entryAnim}
+            onRedeem={handleRedeem}
+            onClose={() => navigation.goBack()}
+          />
+        )}
+      </ScrollView>
+    </SafeAreaView>
+  );
+}
+
+// ============================================================
+//   CONFIRM VIEW
+// ============================================================
+function ConfirmView({ brand, balance, errorMsg, entryAnim, onRedeem, onClose }) {
+  const newBalance = balance - brand.cost;
+  const canAfford = newBalance >= 0;
+
+  return (
+    <Animated.View
+      style={{
+        opacity: entryAnim,
+        transform: [
+          {
+            translateY: entryAnim.interpolate({
+              inputRange: [0, 1],
+              outputRange: [12, 0],
+            }),
+          },
+        ],
+      }}
+    >
+      {/* Header */}
+      <View style={styles.header}>
+        <View style={{ flex: 1 }}>
+          <Text style={styles.eyebrow}>CONFIRM REDEMPTION</Text>
+          <Text style={styles.title}>Redeem reward</Text>
+        </View>
+        <Pressable onPress={onClose} style={styles.closeBtn} hitSlop={10}>
+          <Ionicons name="close" size={22} color={colors.berry} />
+        </Pressable>
+      </View>
+
+      {/* Brand hero */}
+      <LinearGradient colors={brand.gradient} style={styles.brandHero}>
+        <Text style={styles.brandHeroEmoji}>{brand.emoji}</Text>
+        <Text style={styles.brandHeroName}>{brand.name}</Text>
+        <Text style={styles.brandHeroValue}>{brand.value} GIFT CARD</Text>
+      </LinearGradient>
+
+      {/* Breakdown */}
+      <View style={styles.breakdown}>
+        <View style={styles.breakdownRow}>
+          <Text style={styles.breakdownLabel}>Your balance</Text>
+          <Text style={styles.breakdownValue}>{balance.toLocaleString()} 🫐</Text>
+        </View>
+        <View style={styles.breakdownRow}>
+          <Text style={styles.breakdownLabel}>Reward cost</Text>
+          <Text style={[styles.breakdownValue, { color: '#B85278' }]}>
+            – {brand.cost.toLocaleString()} 🫐
+          </Text>
+        </View>
+        <View style={styles.breakdownDivider} />
+        <View style={styles.breakdownRow}>
+          <Text style={[styles.breakdownLabel, { fontFamily: fonts.bodyBold }]}>
+            New balance
+          </Text>
+          <Text
+            style={[
+              styles.breakdownValue,
+              styles.breakdownTotal,
+              !canAfford && { color: '#B85278' },
+            ]}
+          >
+            {Math.max(0, newBalance).toLocaleString()} 🫐
+          </Text>
+        </View>
+      </View>
+
+      {errorMsg ? (
+        <View style={styles.errorBox}>
+          <Ionicons name="alert-circle" size={16} color="#B85278" />
+          <Text style={styles.errorText}>{errorMsg}</Text>
+        </View>
+      ) : null}
+
+      {/* Action */}
+      <Pressable
+        onPress={onRedeem}
+        disabled={!canAfford}
+        style={({ pressed }) => [
+          styles.primaryBtn,
+          !canAfford && styles.primaryBtnDisabled,
+          pressed && canAfford && { opacity: 0.9 },
+        ]}
+      >
+        <Ionicons name="gift" size={18} color={colors.pink} />
+        <Text style={styles.primaryBtnText}>
+          {canAfford ? 'Redeem now' : 'Not enough berries'}
+        </Text>
+      </Pressable>
+
+      <Text style={styles.fineprint}>
+        Once redeemed, the code is generated immediately. Berries are deducted from
+        your balance and cannot be returned.
+      </Text>
+    </Animated.View>
+  );
+}
+
+// ============================================================
+//   SUCCESS VIEW
+// ============================================================
+function SuccessView({ brand, code, successAnim, checkScale, onClose }) {
+  return (
+    <Animated.View
+      style={{
+        opacity: successAnim,
+        transform: [
+          {
+            translateY: successAnim.interpolate({
+              inputRange: [0, 1],
+              outputRange: [12, 0],
+            }),
+          },
+        ],
+        alignItems: 'center',
+      }}
+    >
+      {/* Animated checkmark */}
+      <View style={styles.checkWrap}>
+        <View style={styles.checkHalo} />
         <Animated.View
           style={[
             styles.checkCircle,
             { transform: [{ scale: checkScale }] },
           ]}
         >
-          <Ionicons name="checkmark" size={52} color={colors.pink} />
+          <Ionicons name="checkmark" size={40} color={colors.pink} />
         </Animated.View>
-
-        <Animated.View
-          style={[
-            styles.successHead,
-            {
-              opacity: contentOpacity,
-              transform: [
-                {
-                  translateY: contentOpacity.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: [12, 0],
-                  }),
-                },
-              ],
-            },
-          ]}
-        >
-          <Text style={styles.successTitle}>Redeemed!</Text>
-          <Text style={styles.successSub}>Your reward is ready to use</Text>
-        </Animated.View>
-
-        {/* The gift card */}
-        <Animated.View
-          style={{
-            opacity: contentOpacity,
-            transform: [
-              {
-                translateY: contentOpacity.interpolate({
-                  inputRange: [0, 1],
-                  outputRange: [20, 0],
-                }),
-              },
-            ],
-          }}
-        >
-          <LinearGradient
-            colors={[colors.berry, colors.berry80]}
-            style={styles.giftCard}
-          >
-            {/* Corner decor */}
-            <View style={styles.giftCardDot1} />
-            <View style={styles.giftCardDot2} />
-
-            {/* Accepted ribbon */}
-            <View style={styles.acceptedRibbon}>
-              <Ionicons
-                name="checkmark-circle"
-                size={12}
-                color={colors.berry}
-              />
-              <Text style={styles.acceptedRibbonText}>ACCEPTED</Text>
-            </View>
-
-            {/* Brand */}
-            <View style={styles.giftBrandRow}>
-              <View style={styles.giftLogo}>
-                <Text style={styles.giftLogoText}>{reward.logo}</Text>
-              </View>
-              <View style={{ flex: 1 }}>
-                <Text style={styles.giftBrand}>{reward.brand}</Text>
-                <Text style={styles.giftDesc}>{reward.desc}</Text>
-              </View>
-            </View>
-
-            <View style={styles.giftDivider} />
-
-            {/* Code */}
-            <Text style={styles.giftCodeLabel}>REDEMPTION CODE</Text>
-            <View style={styles.codeBox}>
-              <Text style={styles.codeText}>{code}</Text>
-            </View>
-
-            {/* Perforated edge effect */}
-            <View style={styles.perforation}>
-              {Array.from({ length: 18 }).map((_, i) => (
-                <View key={i} style={styles.perfDot} />
-              ))}
-            </View>
-
-            <View style={styles.giftFooter}>
-              <Text style={styles.giftFooterLabel}>VALUE</Text>
-              <Text style={styles.giftFooterValue}>{reward.desc}</Text>
-            </View>
-          </LinearGradient>
-        </Animated.View>
-
-        {/* Copy code */}
-        <Animated.View style={{ opacity: contentOpacity, width: '100%' }}>
-          <Pressable
-            style={({ pressed }) => [
-              styles.copyBtn,
-              pressed && { opacity: 0.85 },
-            ]}
-            onPress={handleCopy}
-          >
-            <Ionicons
-              name={copied ? 'checkmark' : 'copy-outline'}
-              size={18}
-              color={colors.berry}
-            />
-            <Text style={styles.copyBtnText}>
-              {copied ? 'Copied!' : 'Copy code'}
-            </Text>
-          </Pressable>
-        </Animated.View>
-
-        {/* Saved to account note */}
-        <Animated.Text style={[styles.savedNote, { opacity: contentOpacity }]}>
-          💌 Also sent to your email and saved in your account
-        </Animated.Text>
-      </ScrollView>
-
-      {/* Done button */}
-      <View style={styles.footer}>
-        <Pressable
-          style={({ pressed }) => [
-            styles.primaryBtn,
-            pressed && { opacity: 0.9 },
-          ]}
-          onPress={() => navigation.goBack()}
-        >
-          <Text style={styles.primaryBtnText}>Done</Text>
-        </Pressable>
       </View>
-    </SafeAreaView>
+
+      <Text style={styles.successEyebrow}>REWARD UNLOCKED</Text>
+      <Text style={styles.successTitle}>You got it! 🎉</Text>
+      <Text style={styles.successSub}>
+        Your {brand.name} {brand.value} gift card is ready
+      </Text>
+
+      {/* Gift card */}
+      <View style={styles.giftCardWrap}>
+        <LinearGradient colors={brand.gradient} style={styles.giftCard}>
+          <Text style={styles.giftCardEmoji}>{brand.emoji}</Text>
+          <Text style={styles.giftCardBrand}>{brand.name}</Text>
+          <Text style={styles.giftCardValue}>{brand.value}</Text>
+          {/* Perforated edge */}
+          <View style={styles.perfRow}>
+            {Array.from({ length: 12 }).map((_, i) => (
+              <View key={i} style={styles.perfDot} />
+            ))}
+          </View>
+          <Text style={styles.giftCardCodeLabel}>YOUR CODE</Text>
+          <View style={styles.codeBox}>
+            <Text style={styles.codeText}>{code}</Text>
+          </View>
+        </LinearGradient>
+      </View>
+
+      {/* Actions */}
+      <Pressable
+        style={({ pressed }) => [
+          styles.primaryBtn,
+          { marginTop: 18, width: '100%' },
+          pressed && { opacity: 0.9 },
+        ]}
+      >
+        <Ionicons name="copy-outline" size={16} color={colors.pink} />
+        <Text style={styles.primaryBtnText}>Copy code</Text>
+      </Pressable>
+
+      <Pressable
+        onPress={onClose}
+        style={({ pressed }) => [
+          styles.secondaryBtn,
+          { marginTop: 10, width: '100%' },
+          pressed && { opacity: 0.7 },
+        ]}
+      >
+        <Text style={styles.secondaryBtnText}>Done</Text>
+      </Pressable>
+    </Animated.View>
   );
 }
 
+// ============================================================
+//   STYLES
+// ============================================================
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.cream },
+  scroll: { paddingHorizontal: 24, paddingBottom: 30 },
 
-  // Top bar
-  topBar: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 24,
-    paddingVertical: 12,
+  topBar: { alignItems: 'center', paddingTop: 8, paddingBottom: 4 },
+  handle: {
+    width: 40,
+    height: 4,
+    borderRadius: 2,
+    backgroundColor: colors.creamDark,
   },
-  iconBtn: {
+
+  // Header
+  header: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    justifyContent: 'space-between',
+    paddingTop: 12,
+    paddingBottom: 22,
+  },
+  eyebrow: {
+    fontFamily: fonts.bodyBold,
+    fontSize: 10,
+    color: colors.berry60,
+    letterSpacing: 1.5,
+    marginBottom: 4,
+  },
+  title: {
+    fontFamily: fonts.displayBold,
+    fontSize: 26,
+    color: colors.berry,
+    letterSpacing: -0.5,
+  },
+  closeBtn: {
     width: 40,
     height: 40,
     borderRadius: 20,
@@ -333,132 +347,87 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.creamDark,
   },
-  topBarTitle: {
-    fontFamily: fonts.displaySemi,
-    fontSize: 16,
-    color: colors.berry,
-  },
 
-  scroll: { paddingHorizontal: 24, paddingBottom: 24 },
-
-  // CONFIRM state
-  brandCard: {
-    borderRadius: 28,
+  // Brand hero
+  brandHero: {
+    borderRadius: 22,
     padding: 28,
     alignItems: 'center',
-    marginBottom: 20,
-    shadowColor: colors.pink,
+    marginBottom: 22,
+    shadowColor: colors.berry,
     shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.3,
+    shadowOpacity: 0.18,
     shadowRadius: 20,
     elevation: 6,
   },
-  brandLogoBig: {
-    width: 72,
-    height: 72,
-    borderRadius: 20,
-    backgroundColor: colors.white,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 16,
-    shadowColor: colors.berry,
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 3,
-  },
-  brandLogoBigText: {
+  brandHeroEmoji: { fontSize: 56, marginBottom: 8 },
+  brandHeroName: {
     fontFamily: fonts.displayBold,
-    fontSize: 26,
-    color: colors.berry,
-  },
-  brandNameBig: {
-    fontFamily: fonts.displayBold,
-    fontSize: 28,
-    color: colors.berry,
+    fontSize: 22,
+    color: '#fff',
     letterSpacing: -0.5,
-    marginBottom: 6,
   },
-  brandDesc: {
-    fontFamily: fonts.bodyMedium,
-    fontSize: 14,
-    color: colors.berry80,
-    textAlign: 'center',
-    marginBottom: 16,
-  },
-  costChip: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    backgroundColor: colors.berry,
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    borderRadius: 100,
-  },
-  berryDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: colors.pink,
-  },
-  costChipText: {
-    fontFamily: fonts.displayBold,
-    fontSize: 15,
-    color: colors.pink,
-    letterSpacing: 0.2,
+  brandHeroValue: {
+    fontFamily: fonts.bodyBold,
+    fontSize: 12,
+    color: 'rgba(255,255,255,0.8)',
+    letterSpacing: 1.5,
+    marginTop: 6,
   },
 
-  balanceBox: {
+  // Breakdown
+  breakdown: {
     backgroundColor: colors.white,
     borderWidth: 1,
     borderColor: colors.creamDark,
-    borderRadius: 22,
-    padding: 20,
+    borderRadius: 18,
+    padding: 18,
+    gap: 12,
     marginBottom: 16,
   },
-  balanceRow: {
+  breakdownRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
   },
-  balanceDivider: {
+  breakdownLabel: {
+    fontFamily: fonts.body,
+    fontSize: 13,
+    color: colors.berry80,
+  },
+  breakdownValue: {
+    fontFamily: fonts.bodyBold,
+    fontSize: 14,
+    color: colors.berry,
+  },
+  breakdownDivider: {
     height: 1,
     backgroundColor: colors.creamDark,
-    marginVertical: 14,
+    marginVertical: 4,
   },
-  balanceLabel: {
-    fontFamily: fonts.bodyMedium,
-    fontSize: 14,
-    color: colors.berry80,
-  },
-  balanceLabelBold: {
-    fontFamily: fonts.bodyBold,
-    color: colors.berry,
-  },
-  balanceValue: {
-    fontFamily: fonts.displaySemi,
-    fontSize: 18,
-    color: colors.berry80,
-  },
-  balanceValueBold: {
+  breakdownTotal: {
     fontFamily: fonts.displayBold,
-    fontSize: 20,
-    color: colors.berry,
-  },
-  finePrint: {
-    fontFamily: fonts.body,
-    fontSize: 12,
-    color: colors.berry60,
-    lineHeight: 17,
-    paddingHorizontal: 6,
+    fontSize: 18,
   },
 
-  footer: {
-    paddingHorizontal: 24,
-    paddingTop: 12,
-    paddingBottom: 8,
-    backgroundColor: colors.cream,
+  // Error
+  errorBox: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    padding: 12,
+    backgroundColor: '#FCE4EC',
+    borderRadius: 12,
+    marginBottom: 14,
   },
+  errorText: {
+    fontFamily: fonts.bodyMedium,
+    fontSize: 12,
+    color: '#B85278',
+    flex: 1,
+  },
+
+  // Buttons
   primaryBtn: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -468,225 +437,153 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
     borderRadius: 100,
     shadowColor: colors.berry,
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.25,
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.22,
     shadowRadius: 16,
     elevation: 6,
   },
   primaryBtnDisabled: {
-    opacity: 0.4,
+    backgroundColor: colors.creamDark,
+    opacity: 0.65,
+    shadowOpacity: 0,
   },
   primaryBtnText: {
     fontFamily: fonts.displayBold,
     color: colors.pink,
-    fontSize: 15,
-    letterSpacing: 0.2,
+    fontSize: 14,
+    letterSpacing: 0.3,
   },
-
-  // SUCCESS state
-  successScroll: {
-    paddingHorizontal: 24,
-    paddingTop: 40,
-    paddingBottom: 20,
+  secondaryBtn: {
+    backgroundColor: colors.white,
+    borderWidth: 1.5,
+    borderColor: colors.creamDark,
+    paddingVertical: 14,
+    borderRadius: 100,
     alignItems: 'center',
   },
+  secondaryBtnText: {
+    fontFamily: fonts.bodyBold,
+    fontSize: 13,
+    color: colors.berry,
+  },
+  fineprint: {
+    fontFamily: fonts.body,
+    fontSize: 11,
+    color: colors.berry60,
+    textAlign: 'center',
+    marginTop: 14,
+    lineHeight: 15,
+    paddingHorizontal: 8,
+  },
+
+  // Success view
+  checkWrap: {
+    width: 110,
+    height: 110,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginVertical: 12,
+  },
+  checkHalo: {
+    position: 'absolute',
+    width: 130,
+    height: 130,
+    borderRadius: 65,
+    backgroundColor: 'rgba(246, 186, 214, 0.25)',
+  },
   checkCircle: {
-    width: 96,
-    height: 96,
-    borderRadius: 48,
+    width: 90,
+    height: 90,
+    borderRadius: 45,
     backgroundColor: colors.berry,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 24,
     shadowColor: colors.berry,
     shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.3,
-    shadowRadius: 20,
+    shadowOpacity: 0.35,
+    shadowRadius: 18,
     elevation: 8,
   },
-  successHead: { alignItems: 'center', marginBottom: 28 },
+  successEyebrow: {
+    fontFamily: fonts.bodyBold,
+    fontSize: 10,
+    color: colors.berry60,
+    letterSpacing: 1.5,
+    marginTop: 18,
+  },
   successTitle: {
     fontFamily: fonts.displayBold,
-    fontSize: 38,
+    fontSize: 28,
     color: colors.berry,
     letterSpacing: -0.5,
+    marginTop: 4,
   },
   successSub: {
-    fontFamily: fonts.bodyMedium,
-    fontSize: 14,
+    fontFamily: fonts.body,
+    fontSize: 13,
     color: colors.berry80,
     marginTop: 6,
+    textAlign: 'center',
   },
 
   // Gift card
+  giftCardWrap: { width: '100%', marginTop: 22 },
   giftCard: {
-    width: '100%',
-    borderRadius: 24,
-    padding: 24,
-    marginBottom: 20,
-    overflow: 'hidden',
+    borderRadius: 18,
+    padding: 22,
+    alignItems: 'center',
     shadowColor: colors.berry,
-    shadowOffset: { width: 0, height: 12 },
-    shadowOpacity: 0.35,
-    shadowRadius: 20,
-    elevation: 10,
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.2,
+    shadowRadius: 18,
+    elevation: 6,
   },
-  giftCardDot1: {
-    position: 'absolute',
-    width: 180,
-    height: 180,
-    borderRadius: 90,
-    backgroundColor: colors.pink,
-    opacity: 0.12,
-    top: -60,
-    right: -50,
-  },
-  giftCardDot2: {
-    position: 'absolute',
-    width: 120,
-    height: 120,
-    borderRadius: 60,
-    backgroundColor: colors.pink,
-    opacity: 0.08,
-    bottom: -30,
-    left: -30,
-  },
-  acceptedRibbon: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 4,
-    alignSelf: 'flex-start',
-    backgroundColor: colors.pink,
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 100,
-    marginBottom: 16,
-  },
-  acceptedRibbonText: {
-    fontFamily: fonts.bodyBold,
-    fontSize: 10,
-    color: colors.berry,
-    letterSpacing: 1.2,
-  },
-
-  giftBrandRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 14,
-    marginBottom: 20,
-  },
-  giftLogo: {
-    width: 52,
-    height: 52,
-    borderRadius: 14,
-    backgroundColor: colors.pink,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  giftLogoText: {
-    fontFamily: fonts.displayBold,
-    fontSize: 20,
-    color: colors.berry,
-  },
-  giftBrand: {
-    fontFamily: fonts.displayBold,
-    fontSize: 20,
-    color: colors.pink,
-    letterSpacing: -0.3,
-  },
-  giftDesc: {
-    fontFamily: fonts.body,
-    fontSize: 12,
-    color: colors.pink50,
-    opacity: 0.75,
-    marginTop: 2,
-  },
-
-  giftDivider: {
-    height: 1,
-    backgroundColor: 'rgba(246, 186, 214, 0.2)',
-    marginBottom: 18,
-  },
-
-  giftCodeLabel: {
-    fontFamily: fonts.bodyBold,
-    fontSize: 10,
-    color: colors.pink,
-    letterSpacing: 1.8,
-    marginBottom: 10,
-  },
-  codeBox: {
-    borderWidth: 1.5,
-    borderColor: colors.pink,
-    borderStyle: 'dashed',
-    borderRadius: 12,
-    paddingVertical: 16,
-    paddingHorizontal: 12,
-    alignItems: 'center',
-    marginBottom: 20,
-    backgroundColor: 'rgba(246, 186, 214, 0.06)',
-  },
-  codeText: {
+  giftCardEmoji: { fontSize: 36, marginBottom: 4 },
+  giftCardBrand: {
     fontFamily: fonts.displayBold,
     fontSize: 18,
-    color: colors.white,
-    letterSpacing: 2,
+    color: '#fff',
+    letterSpacing: -0.3,
   },
-
-  perforation: {
+  giftCardValue: {
+    fontFamily: fonts.displayBold,
+    fontSize: 36,
+    color: '#fff',
+    letterSpacing: -1.2,
+    marginTop: 2,
+  },
+  perfRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginHorizontal: -8,
-    marginBottom: 18,
+    width: '100%',
+    marginVertical: 14,
   },
   perfDot: {
     width: 6,
     height: 6,
     borderRadius: 3,
-    backgroundColor: 'rgba(246, 186, 214, 0.25)',
+    backgroundColor: 'rgba(255,255,255,0.4)',
   },
-
-  giftFooter: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  giftFooterLabel: {
+  giftCardCodeLabel: {
     fontFamily: fonts.bodyBold,
-    fontSize: 10,
-    color: colors.pink,
-    letterSpacing: 1.8,
+    fontSize: 9,
+    color: 'rgba(255,255,255,0.7)',
+    letterSpacing: 1.5,
+    marginBottom: 6,
   },
-  giftFooterValue: {
-    fontFamily: fonts.displaySemi,
-    fontSize: 14,
-    color: colors.pink50,
-    opacity: 0.9,
-  },
-
-  // Copy button
-  copyBtn: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 8,
-    backgroundColor: colors.white,
+  codeBox: {
+    backgroundColor: 'rgba(255,255,255,0.18)',
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    borderRadius: 10,
     borderWidth: 1,
-    borderColor: colors.creamDark,
-    paddingVertical: 14,
-    borderRadius: 100,
-    marginBottom: 16,
+    borderColor: 'rgba(255,255,255,0.25)',
+    borderStyle: 'dashed',
   },
-  copyBtnText: {
-    fontFamily: fonts.bodySemi,
-    fontSize: 14,
-    color: colors.berry,
-  },
-  savedNote: {
-    fontFamily: fonts.body,
-    fontSize: 12,
-    color: colors.berry60,
-    textAlign: 'center',
-    paddingHorizontal: 8,
+  codeText: {
+    fontFamily: fonts.displayBold,
+    fontSize: 16,
+    color: '#fff',
+    letterSpacing: 2,
   },
 });

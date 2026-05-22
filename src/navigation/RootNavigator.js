@@ -8,6 +8,8 @@ import RewardDetailScreen from '../screens/RewardDetailScreen';
 import FriendProfileScreen from '../screens/FriendProfileScreen';
 import AddQuestScreen from '../screens/AddQuestScreen';
 import ProofSubmissionScreen from '../screens/ProofSubmissionScreen';
+import ChallengeCreateScreen from '../screens/ChallengeCreateScreen';
+import ChallengeChatScreen from '../screens/ChallengeChatScreen';
 import TabNavigator from './TabNavigator';
 
 const Stack = createNativeStackNavigator();
@@ -19,25 +21,21 @@ export default function RootNavigator() {
       screenOptions={{
         headerShown: false,
         animation: 'slide_from_right',
-        contentStyle: { backgroundColor: '#FAF3EE' },
       }}
     >
       <Stack.Screen name="Onboarding" component={OnboardingScreen} />
       <Stack.Screen name="Login" component={LoginScreen} />
       <Stack.Screen name="SignUp" component={SignUpScreen} />
+      <Stack.Screen name="Main" component={TabNavigator} />
+
       <Stack.Screen
-        name="Main"
-        component={TabNavigator}
-        options={{ animation: 'fade' }}
+        name="RewardDetail"
+        component={RewardDetailScreen}
+        options={{ presentation: 'modal', animation: 'slide_from_bottom' }}
       />
       <Stack.Screen
         name="FriendProfile"
         component={FriendProfileScreen}
-        options={{ animation: 'slide_from_right' }}
-      />
-      <Stack.Screen
-        name="RewardDetail"
-        component={RewardDetailScreen}
         options={{ presentation: 'modal', animation: 'slide_from_bottom' }}
       />
       <Stack.Screen
@@ -49,6 +47,16 @@ export default function RootNavigator() {
         name="ProofSubmission"
         component={ProofSubmissionScreen}
         options={{ presentation: 'modal', animation: 'slide_from_bottom' }}
+      />
+      <Stack.Screen
+        name="ChallengeCreate"
+        component={ChallengeCreateScreen}
+        options={{ presentation: 'modal', animation: 'slide_from_bottom' }}
+      />
+      <Stack.Screen
+        name="ChallengeChat"
+        component={ChallengeChatScreen}
+        options={{ animation: 'slide_from_right' }}
       />
     </Stack.Navigator>
   );
